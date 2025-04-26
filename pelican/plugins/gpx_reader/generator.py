@@ -198,7 +198,10 @@ class GPXGenerator(CachingGenerator):
             ],
             f"{gpx_log_name} ({heatmap_key})",
         )
-        my_hash = gpx_hash(combined_gpx.to_xml())
+        try:
+            my_hash = gpx_hash(combined_gpx.to_xml())
+        except AttributeError:
+            my_hash = gpx_hash(combined_gpx)
         xml_save_as = xml_save_as_setting.format(
             date=date,
             heatmap=heatmap_key,

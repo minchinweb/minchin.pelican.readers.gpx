@@ -90,9 +90,19 @@ def combine_gpx(gpxes, log_name=None):
                 combined_gpx.tracks.append(track)
 
     if log_name:
-        track_count = len(combined_gpx.tracks)
+        try:
+            track_count = len(combined_gpx.tracks)
+        except AttributeError:
+            logger.debug(
+                "%s combined GPX for %s is empty.",
+                LOG_PREFIX,
+                log_name,
+            )
+            return None
+        
         segment_count = 0
         point_count = 0
+        travel_length_km = 0
 
         for track in combined_gpx.tracks:
             segment_count += len(track.segments)
@@ -112,6 +122,7 @@ def combine_gpx(gpxes, log_name=None):
             f"and {point_count:,} point{'s' if point_count != 1 else ''}. "
             f"{travel_length_km:,.1f} km long."
         )
+
     return combined_gpx
 
 

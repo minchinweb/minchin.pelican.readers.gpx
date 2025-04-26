@@ -78,7 +78,7 @@ class EverythingWriter(Writer):
         with self._open_w(output_file, "utf-8", override=override_output) as f:
             f.write(xml)
 
-        logger.info("%s Writing XML %s", LOG_PREFIX, output_file)
+        logger.info('%s Writing XML "%s"', LOG_PREFIX, output_file)
         # Send a signal to say we're writing a file with some specific
         # local context.
         signals.xml_content_written.send(
@@ -124,7 +124,7 @@ class EverythingWriter(Writer):
 
         image.save(output_file, format=image_format)
 
-        logger.info("%s Writing image %s", LOG_PREFIX, output_file)
+        logger.info('%s Writing image "%s"', LOG_PREFIX, output_file)
         # Send a signal to say we're writing a file with some specific
         # local context.
         signals.image_content_written.send(
