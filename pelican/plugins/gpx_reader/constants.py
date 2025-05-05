@@ -24,13 +24,13 @@ GPX_CATEGORY = "GPX"
 GPX_STATUS = "published"
 GPX_SIMPLIFY_DISTANCE = 5  # in meters
 GPX_HEATMAPS = {"default": dict()}
-GPX_SAVE_AS = "gpx/{heatmap}/{slug}.gpx"
-ALL_GPX_SAVE_AS = "gpx/{heatmap}/combined/all.gpx"
-YEAR_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}.gpx"
-# QUARTER_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}-Q{quarter}.gpx"  # https://github.com/BetaS/datetime-quarter
-MONTH_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}-{date:%m}.gpx"
-WEEK_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%G}-W{date:%V}.gpx"
-DAY_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}-{date:%m}-{date:%d}.gpx"
+GPX_GPX_SAVE_AS = "gpx/{heatmap}/{slug}.gpx"
+ALL_GPX_GPX_SAVE_AS = "gpx/{heatmap}/combined/all.gpx"
+YEAR_GPX_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}.gpx"
+# QUARTER_GPX_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}-Q{quarter}.gpx"  # https://github.com/BetaS/datetime-quarter
+MONTH_GPX_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}-{date:%m}.gpx"
+WEEK_GPX_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%G}-W{date:%V}.gpx"
+DAY_GPX_GPX_SAVE_AS = "gpx/{heatmap}/combined/{date:%Y}-{date:%m}-{date:%d}.gpx"
 # GPX_IMAGE_SAVE_AS = "images/gpx/{heatmap}/{slug}.png"
 # ALL_GPX_IMAGE_SAVE_AS = "images/gpx/{heatmap}/combined/all.png"
 # YEAR_GPX_IMAGE_SAVE_AS = "images/gpx/{heatmap}/combined/{date:%Y}.png"
@@ -64,6 +64,10 @@ else:
     GPX_HSVA_MAX = None
 GPX_EXTENT = None
 GPX_BACKGROUND_IMAGE = None
+
+# GPX "articles"
+GPX_SAVE_AS = '{slug}/index.html'
+GPX_URL = '{slug}'
 
 
 def test_enabled(log=True):

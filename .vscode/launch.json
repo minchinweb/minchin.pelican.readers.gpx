@@ -10,7 +10,11 @@
             "request": "launch",
             "module": "pelican",
             "cwd": "${workspaceFolder}/test-site",
-            "args": ["--debug"]
+            "args": ["--debug"],
+            "env": {
+                "PYTHONPATH": "${cwd}"
+            },
+            "jinja": true
         }
     ]
 }

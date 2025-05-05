@@ -41,7 +41,6 @@ class EverythingWriter(Writer):
                     base if base.endswith("/") else base + "/", url
                 )
 
-
     def write_xml(self, name, template, context, xml, override_output=False, **kwargs):
         """
         Write out an XML file.

@@ -243,6 +243,7 @@ def generate_metadata(gpx, source_file, pelican_settings):
 
     metadata = {
         "title": f"GPX track for {source_file.name}",
+        "_summary": f"GPX track for {source_file.name}",
         "category": pelican_settings["GPX_CATEGORY"],
         "date": str(start_time),
         # "tags": [
@@ -267,7 +268,7 @@ def generate_metadata(gpx, source_file, pelican_settings):
         "valid": True,
     }
 
-    # TODO: switch this to generated article
+    # this to generated "article"
     metadata["save_as"] = pelican_settings["GPX_SAVE_AS"].format(
         heatmap="default", **metadata
     )
@@ -278,6 +279,8 @@ def generate_metadata(gpx, source_file, pelican_settings):
         trimmed_gpx_save_as_key = f"gpx_{heatmap}_save_as"
         trimmed_gpx_hash_key = f"gpx_{heatmap}_hash"
 
+        # NOTE: This dropped the GPX file, perhaps multiple times, into the
+        # in-memory context for Pelican. This may cause memory issues??
         if pelican_settings["GPX_HEATMAPS"][heatmap]["extent"] is None:
             metadata[trimmed_gpx_key] = gpx.to_xml()
         else:
@@ -300,7 +303,7 @@ def generate_metadata(gpx, source_file, pelican_settings):
         metadata[image_key] = pelican_settings["GPX_IMAGE_SAVE_AS"].format(
             heatmap=heatmap, hash=my_hash, **metadata
         )
-        metadata[trimmed_gpx_save_as_key] = pelican_settings["GPX_SAVE_AS"].format(
+        metadata[trimmed_gpx_save_as_key] = pelican_settings["GPX_GPX_SAVE_AS"].format(
             heatmap=heatmap, hash=my_hash, **metadata
         )
 

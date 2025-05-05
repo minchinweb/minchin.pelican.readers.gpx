@@ -1,6 +1,6 @@
 from pelican import signals as pelican_signals
 
-from .constants import __version__
+from .constants import __version__  # NOQA
 from .generator import GPXArticleGenerator, GPXGenerator, display_stats
 from .initialize import check_settings
 from .reader import GPXReader

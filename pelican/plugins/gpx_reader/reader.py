@@ -19,6 +19,9 @@ class GPXReader(BaseReader):
 
     Rather than returning HTML (as is typically done with Pelican), it returns
     the (raw, but cleaned) XML of the GPX file.
+
+    For metadata available for each file (after running this), see
+    `.gpx.generate_metadata()`.
     """
 
     enabled = test_enabled(log=True)
@@ -46,7 +49,7 @@ class GPXReader(BaseReader):
                 source_file=source_file,
                 pelican_settings=self.settings,
             )
-        except TooShortGPXException as e:
+        except TooShortGPXException:
             logger.info(
                 "%sGPX tracks is too short. Skipping file (%s)",
                 INDENT,

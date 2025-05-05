@@ -1,7 +1,7 @@
 import calendar
 from datetime import datetime
 from functools import partial
-from itertools import groupby
+from itertools import groupby, chain
 import logging
 from operator import attrgetter
 from pathlib import Path
@@ -32,30 +32,51 @@ period_date_key = {
 
 
 class GPXArticleGenerator(ArticlesGenerator):
-    def generate_pages(self, writer):
-        """Generate the pages on the disk"""
-        logger.debug("%s Article Generator: generate pages", LOG_PREFIX)
+    # def generate_pages(self, writer):
+    #     """Generate the pages on the disk"""
+    #     logger.debug("%s Article Generator: generate pages", LOG_PREFIX)
 
-        write = partial(writer.write_file, relative_urls=self.settings["RELATIVE_URLS"])
+    #     write = partial(writer.write_file, relative_urls=self.settings["RELATIVE_URLS"])
 
-        # # to minimize the number of relative path stuff modification
-        # # in writer, articles pass first
-        # self.generate_articles(write)
-        # self.generate_period_archives(write)
-        # self.generate_direct_templates(write)
+    #     # # to minimize the number of relative path stuff modification
+    #     # # in writer, articles pass first
+    #     # self.generate_articles(write)
+    #     # self.generate_period_archives(write)
+    #     # self.generate_direct_templates(write)
 
-        # # and subfolders after that
-        # self.generate_tags(write)
-        # self.generate_categories(write)
-        # self.generate_authors(write)
-        # self.generate_drafts(write)
+    #     # # and subfolders after that
+    #     # self.generate_tags(write)
+    #     # self.generate_categories(write)
+    #     # self.generate_authors(write)
+    #     # self.generate_drafts(write)
+
+    def generate_articles(self, write):
+        """Generate the "articles"."""
+        for article in chain(
+            # self.translations,
+            # self.articles,
+            # self.hidden_translations,
+            # self.hidden_articles,
+            self.gpxes,
+        ):
+            signals.article_generator_write_article.send(self, content=article)
+            write(
+                article.save_as,
+                self.get_template(article.template),
+                self.context,
+                article=article,
+                category=article.category,
+                override_output=hasattr(article, "override_save_as"),
+                url=article.url,
+                blog=True,
+            )
 
 
 class GPXGenerator(CachingGenerator):
     def __init__(self, *args, **kwargs):
         """initialize properties"""
         self.gpxes = []
-        self.dates = {}
+        # self.dates = {}
 
         super().__init__(*args, **kwargs)
         signals.gpx_generator_init.send(self)
@@ -64,7 +85,7 @@ class GPXGenerator(CachingGenerator):
         """
         Called by Pelican to fill context.
 
-        Context is the metadata about all the pages/articles/etc that is
+        "Context" is the metadata about all the pages/articles/etc that is
         offered up to the templating engine.
         """
         all_gpxes = []
@@ -315,12 +336,12 @@ class GPXGenerator(CachingGenerator):
         combined GPX files.
         """
         period_save_as = {
-            "all": self.settings["ALL_GPX_SAVE_AS"],
-            "year": self.settings["YEAR_GPX_SAVE_AS"],
-            # "quarter": self.settings["QUARTER_GPX_SAVE_AS"],
-            "month": self.settings["MONTH_GPX_SAVE_AS"],
-            "week": self.settings["WEEK_GPX_SAVE_AS"],
-            "day": self.settings["DAY_GPX_SAVE_AS"],
+            "all": self.settings["ALL_GPX_GPX_SAVE_AS"],
+            "year": self.settings["YEAR_GPX_GPX_SAVE_AS"],
+            # "quarter": self.settings["QUARTER_GPX_GPX_SAVE_AS"],
+            "month": self.settings["MONTH_GPX_GPX_SAVE_AS"],
+            "week": self.settings["WEEK_GPX_GPX_SAVE_AS"],
+            "day": self.settings["DAY_GPX_GPX_SAVE_AS"],
         }
         period_heatmap_save_as = {
             "all": self.settings["ALL_GPX_IMAGE_SAVE_AS"],
@@ -340,6 +361,36 @@ class GPXGenerator(CachingGenerator):
                     self.dates, key, heatmap, xml_save_as, heatmap_save_as, writer
                 )
 
+    def generate_articles(self, writer):
+        """Generate the "articles"."""
+        for article in chain(
+            # self.translations,
+            # self.articles,
+            # self.hidden_translations,
+            # self.hidden_articles,
+            self.gpxes,
+        ):
+            
+            signals.gpx_generator_write_article.send(self, content=article)
+            
+            # Skip invalid GPX files
+            if article.metadata["valid"] is False:
+                continue
+
+            logging.debug(
+                "%s Writing (generic) file for %s", LOG_PREFIX, article
+            )
+            writer.write_file(
+                article.save_as,
+                self.get_template(article.template),
+                self.context,
+                article=article,
+                category=article.category,
+                override_output=hasattr(article, "override_save_as"),
+                url=article.url,
+                blog=True,
+            )
+
     def generate_output(self, writer):
         """
         Called by Pelican to push the resulting files to disk.
@@ -347,6 +398,8 @@ class GPXGenerator(CachingGenerator):
         for heatmap in self.settings["GPX_HEATMAPS"].keys():
             self.generate_gpxes(heatmap=heatmap, writer=writer)
             self.generate_period_gpxes(heatmap=heatmap, writer=writer)
+        
+        self.generate_articles(writer=writer)
 
         signals.gpx_writer_finalized.send(self, writer=writer)
 
