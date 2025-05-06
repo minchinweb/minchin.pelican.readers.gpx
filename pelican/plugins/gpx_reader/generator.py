@@ -6,6 +6,7 @@ import logging
 from operator import attrgetter
 from pathlib import Path
 
+from pelican.contents import Article
 from pelican.generators import ArticlesGenerator, CachingGenerator
 from pelican.utils import order_content
 
@@ -134,6 +135,8 @@ class GPXGenerator(CachingGenerator):
         )
 
         self._update_context(("gpxes", "dates"))
+        # self.context is shared by all Generators
+        self.context["gpxes"] = self.gpxes
         self.save_cache()
         self.readers.save_cache()
 
@@ -361,7 +364,7 @@ class GPXGenerator(CachingGenerator):
                     self.dates, key, heatmap, xml_save_as, heatmap_save_as, writer
                 )
 
-    def generate_articles(self, writer):
+    def insert_gpx_articles(self, writer):
         """Generate the "articles"."""
         for article in chain(
             # self.translations,
@@ -399,9 +402,47 @@ class GPXGenerator(CachingGenerator):
             self.generate_gpxes(heatmap=heatmap, writer=writer)
             self.generate_period_gpxes(heatmap=heatmap, writer=writer)
         
-        self.generate_articles(writer=writer)
+        # self.generate_articles(writer=writer)
 
         signals.gpx_writer_finalized.send(self, writer=writer)
+
+
+def insert_gpx_articles(generators):
+    """
+    Is passed the (built-in) ArticleGenerator, and then pushes each GPX into
+    its list of articles. Then actual generation can be left to the
+    ArticleGenerator.
+
+    Idea/process copied from my Microblog plugin.
+    """
+    # This relies on an implementation detail of Pelican, namely that it keeps
+    # the ArticleGenerator as the first one it loads. If this fails in the
+    # future, use a class-type comparison?
+    articleGenerator = generators[0]
+
+    for gpx in articleGenerator.context["gpxes"]:
+        # Skip invalid GPX files
+        if gpx.metadata["valid"] is False:
+            continue
+
+        # print(gpx.metadata.keys())
+        # print(f"{gpx.metadata["gpx_default_hash"]=}")
+        # print(f"{gpx.metadata["gpx_default_image"]=}")
+        # print(f"{gpx.metadata["gpx_default_save_as"]=}")
+
+        new_article = Article(
+            gpx.content,
+            gpx.metadata,
+        )
+
+        articleGenerator.articles.insert(0, new_article)
+
+    # apply sorting
+    logger.debug(f'{LOG_PREFIX} sorting order: "{articleGenerator.settings.get("ARTICLE_ORDER_BY", "reversed-date")}"')
+    articleGenerator.articles = order_content(
+        articleGenerator.articles, articleGenerator.settings.get("ARTICLE_ORDER_BY", "reversed-date")
+    )
+
 
 
 def display_stats(pelican_obj):

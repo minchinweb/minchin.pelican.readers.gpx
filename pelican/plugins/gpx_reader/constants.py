@@ -4,17 +4,19 @@ from ._vendor.heatmap import heatmap
 
 logger = logging.getLogger(__name__)
 
-__title__ = "pelican.plugins.gpx_reader"
+__title__ = "pelican.plugins.readers.gpx"
 __version__ = "0.1.0+dev.1"
 __description__ = "GPX Reader for Pelican"
 __author__ = "William Minchin"
 __email__ = "w_minchin@hotmail.com"
-__url__ = "https://github.com/MinchinWeb/gpx_reader"
+__url__ = "https://github.com/minchinweb/minchin.pelican.readers.gpx"
 __license__ = "MIT License"
 
 
 INDENT = " " * 4
 LOG_PREFIX = "[GPX Reader]"
+GPX_DEV_URL = __url__
+GPX_VERSION = __version__
 GPX_PATHS = [
     "gpx",
 ]  # source paths

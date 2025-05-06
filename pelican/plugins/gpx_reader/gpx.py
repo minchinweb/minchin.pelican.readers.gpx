@@ -242,7 +242,8 @@ def generate_metadata(gpx, source_file, pelican_settings):
     )
 
     metadata = {
-        "title": f"GPX track for {source_file.name}",
+        "gpx": True,  # useful for theme processing
+        "title": f"{source_file.name}",
         "_summary": f"GPX track for {source_file.name}",
         "category": pelican_settings["GPX_CATEGORY"],
         "date": str(start_time),
@@ -270,6 +271,9 @@ def generate_metadata(gpx, source_file, pelican_settings):
 
     # this to generated "article"
     metadata["save_as"] = pelican_settings["GPX_SAVE_AS"].format(
+        heatmap="default", **metadata
+    )
+    metadata["url"] = pelican_settings["GPX_URL"].format(
         heatmap="default", **metadata
     )
 
