@@ -68,8 +68,8 @@ GPX_EXTENT = None
 GPX_BACKGROUND_IMAGE = None
 
 # GPX "articles"
-GPX_SAVE_AS = '{slug}/index.html'
-GPX_URL = '{slug}'
+GPX_SAVE_AS = "{slug}/index.html"
+GPX_URL = "{slug}"
 
 
 def test_enabled(log=True):

@@ -1,5 +1,6 @@
 from hashlib import md5
 
+
 def gpx_hash(gpx):
     """
     Given a GPX track(s), returns a hash.

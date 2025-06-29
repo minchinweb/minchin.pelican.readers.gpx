@@ -8,7 +8,7 @@ from pelican.utils import pelican_open
 
 from .constants import INDENT, LOG_PREFIX, test_enabled
 from .exceptions import TooShortGPXException
-from .gpx import clean_gpx, generate_metadata, simplify_gpx, get_start_end_times
+from .gpx import clean_gpx, generate_metadata, get_start_end_times, simplify_gpx
 
 logger = logging.getLogger(__name__)
 

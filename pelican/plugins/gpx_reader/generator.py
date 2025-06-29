@@ -1,7 +1,7 @@
 import calendar
 from datetime import datetime
 from functools import partial
-from itertools import groupby, chain
+from itertools import chain, groupby
 import logging
 from operator import attrgetter
 from pathlib import Path
@@ -373,16 +373,13 @@ class GPXGenerator(CachingGenerator):
             # self.hidden_articles,
             self.gpxes,
         ):
-            
             signals.gpx_generator_write_article.send(self, content=article)
-            
+
             # Skip invalid GPX files
             if article.metadata["valid"] is False:
                 continue
 
-            logging.debug(
-                "%s Writing (generic) file for %s", LOG_PREFIX, article
-            )
+            logging.debug("%s Writing (generic) file for %s", LOG_PREFIX, article)
             writer.write_file(
                 article.save_as,
                 self.get_template(article.template),
@@ -401,7 +398,7 @@ class GPXGenerator(CachingGenerator):
         for heatmap in self.settings["GPX_HEATMAPS"].keys():
             self.generate_gpxes(heatmap=heatmap, writer=writer)
             self.generate_period_gpxes(heatmap=heatmap, writer=writer)
-        
+
         # self.generate_articles(writer=writer)
 
         signals.gpx_writer_finalized.send(self, writer=writer)
@@ -438,11 +435,13 @@ def insert_gpx_articles(generators):
         articleGenerator.articles.insert(0, new_article)
 
     # apply sorting
-    logger.debug(f'{LOG_PREFIX} sorting order: "{articleGenerator.settings.get("ARTICLE_ORDER_BY", "reversed-date")}"')
-    articleGenerator.articles = order_content(
-        articleGenerator.articles, articleGenerator.settings.get("ARTICLE_ORDER_BY", "reversed-date")
+    logger.debug(
+        f'{LOG_PREFIX} sorting order: "{articleGenerator.settings.get("ARTICLE_ORDER_BY", "reversed-date")}"'
     )
-
+    articleGenerator.articles = order_content(
+        articleGenerator.articles,
+        articleGenerator.settings.get("ARTICLE_ORDER_BY", "reversed-date"),
+    )
 
 
 def display_stats(pelican_obj):

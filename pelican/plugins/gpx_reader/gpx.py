@@ -99,7 +99,7 @@ def combine_gpx(gpxes, log_name=None):
                 log_name,
             )
             return None
-        
+
         segment_count = 0
         point_count = 0
         travel_length_km = 0
@@ -140,7 +140,9 @@ def clip_gpx(lat_1, long_1, lat_2, long_2, gpx, heatmap_name):
         heatmap_name (str): used in logging
     """
 
-    min_lat, min_long, max_lat, max_long = min_max_lat_long(lat_1, long_1, lat_2, long_2)
+    min_lat, min_long, max_lat, max_long = min_max_lat_long(
+        lat_1, long_1, lat_2, long_2
+    )
 
     cut_count = 0
     for track in gpx.tracks:
@@ -273,9 +275,7 @@ def generate_metadata(gpx, source_file, pelican_settings):
     metadata["save_as"] = pelican_settings["GPX_SAVE_AS"].format(
         heatmap="default", **metadata
     )
-    metadata["url"] = pelican_settings["GPX_URL"].format(
-        heatmap="default", **metadata
-    )
+    metadata["url"] = pelican_settings["GPX_URL"].format(heatmap="default", **metadata)
 
     for heatmap in pelican_settings["GPX_HEATMAPS"].keys():
         image_key = f"gpx_{heatmap}_image"
@@ -323,7 +323,9 @@ def expand_trim_zone(lat_1, long_1, lat_2, long_2):
 
     Basic math is to add a 1/2 degree or 10% to each side, whichever is larger.
     """
-    min_lat, min_long, max_lat, max_long = min_max_lat_long(lat_1, long_1, lat_2, long_2)
+    min_lat, min_long, max_lat, max_long = min_max_lat_long(
+        lat_1, long_1, lat_2, long_2
+    )
 
     delta_lat = max_lat - min_lat
     delta_long = max_long - min_long

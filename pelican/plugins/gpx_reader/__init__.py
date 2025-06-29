@@ -1,7 +1,12 @@
 from pelican import signals as pelican_signals
 
 from .constants import __version__  # NOQA
-from .generator import GPXArticleGenerator, GPXGenerator, display_stats, insert_gpx_articles
+from .generator import (
+    GPXArticleGenerator,
+    GPXGenerator,
+    display_stats,
+    insert_gpx_articles,
+)
 from .initialize import check_settings
 from .reader import GPXReader
 
@@ -12,6 +17,7 @@ def add_gpx_reader(readers):
 
 def add_gpx_generator(pelican_instance):
     return GPXGenerator
+
 
 def add_gpx_article_generator(pelican_instance):
     return GPXArticleGenerator
