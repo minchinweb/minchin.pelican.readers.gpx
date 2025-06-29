@@ -71,6 +71,9 @@ GPX_BACKGROUND_IMAGE = None
 GPX_SAVE_AS = "{slug}/index.html"
 GPX_URL = "{slug}"
 
+# store generated images for use my the theme
+GPX_GENERATED = {"default": {0: {0: {0: {"image": None}}}}}
+
 
 def test_enabled(log=True):
     if heatmap:

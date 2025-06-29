@@ -36,6 +36,7 @@ from .constants import (
     WEEK_GPX_IMAGE_SAVE_AS,
     YEAR_GPX_GPX_SAVE_AS,
     YEAR_GPX_IMAGE_SAVE_AS,
+    GPX_GENERATED,
 )
 
 logger = logging.getLogger(__name__)
@@ -70,6 +71,7 @@ def check_settings(pelican):
         "YEAR_GPX_GPX_SAVE_AS",
         "GPX_DEV_URL",
         "GPX_VERSION",
+        "GPX_GENERATED",
     ]:
         if key not in pelican.settings.keys():
             pelican.settings[key] = eval(key)

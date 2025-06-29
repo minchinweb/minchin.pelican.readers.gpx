@@ -22,6 +22,21 @@ GPX_SIMPLIFY_DISTANCE
 
 (and more)
 
+Jinja (Theme) Context
+---------------------
+
+In addition to the settings above, the following are added to the Pelican
+context that is passed Jinja and thus the themes.
+
+GPX_GENERATED
+  keys are ``heatmap_key`` and then up to three ``period`` keys ("year",
+  "month", and "day"). A "year" of ``0`` is the all-inclusive map; a "month" of
+  ``0`` means that these are actually weekly maps (with the "day" being the ISO
+  week number). The value is the hash corresponding to the generated image.
+  "Extra" slots (i.e. "day" for a month, and "months" and "days" for a year)
+  are set to ``0``. For the map for 2025 is at
+  ``GPX_GENERATED["default"][2025][0][0]``. Keys may be missing if no
+  map was generated for that period.
 
 
 "Article" Metadata

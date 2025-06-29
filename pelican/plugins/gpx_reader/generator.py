@@ -202,15 +202,28 @@ class GPXGenerator(CachingGenerator):
         ----
             gpxes (pelican.contents.Content): the gpxes (think articles) that
                 need to be combined
-            save_as_setting (str): the setting that is used to determine where
-                to save the combined file
-            date (datetime.datetime): applied to `save_as_setting` to get final
-                filename
-            gpx_log_name (str): used in logging to refer to this run
-            context: context that would normally be passed to the Jinja
-                templates
-            context_period (tuple): added to context at "period"
-            context_period_number (tuple): added to context at "period_num"
+            xml_save_as_setting (str): the setting that is used to determine
+                where to save the combined gpx file
+            heatmap_save_as_setting (str): the setting that is used to
+                determine where to save the combined generated image file
+            date (datetime.datetime): applied to ``save_as_setting`` to get
+                final filename
+            gpx_log_name (str): used in logging to refer to this run context;
+                context that would normally be passed to the Jinja templates
+            context_period (tuple): added to context at "period". Set to
+                ``("all", )`` for master (all-inclusive) period, set to,
+                e.g. ``(2025, )`` for a year, set to, e.g. ``(2025, "June")``
+                for a month (month name may change with locale; c.f.
+                ``calendar.month_name``), set to, e.g. ``(2025, "week", 32)``
+                for a week (using ISO week numbers and corresponding "year"),
+                set to, e.g. ``(2025, "June", 28)`` for a day.
+            context_period_number (tuple): added to context at "period_num".
+                Set to ``(0, )`` for master (all-inclusive) period, set to,
+                e.g. ``(2025, )`` for a year, set to, e.g. ``(2025, 6)``
+                for a month, set to, e.g. ``(2025, 0, 32)``
+                for a week (i.e. using ``0`` for the "month" and ISO week
+                numbers and corresponding "year"), set to, e.g.
+                ``(2025, 6, 28)`` for a day.
             writer (pelican.writers.Writer): class that does the actual write
                 to disk
         """
@@ -265,6 +278,89 @@ class GPXGenerator(CachingGenerator):
                         self.settings["GPX_HEATMAPS"][heatmap_key],
                     ),
                 )
+
+            # push image key to Pelican shared context, so that themes can us
+            # it on their period (daily, monthly, etc) pages
+
+            if not heatmap_key in self.settings["GPX_GENERATED"]:
+                self.settings["GPX_GENERATED"][heatmap_key] = dict()
+            if (
+                not context_period_number[0]
+                in self.settings["GPX_GENERATED"][heatmap_key]
+            ):
+                self.settings["GPX_GENERATED"][heatmap_key][
+                    context_period_number[0]
+                ] = dict()
+
+            if len(context_period_number) == 1:
+                if (
+                    not 0
+                    in self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ]
+                ):
+                    self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ][0] = dict()
+                if (
+                    not 0
+                    in self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0][0]
+                    ]
+                ):
+                    self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ][0][0] = dict()
+
+                self.settings["GPX_GENERATED"][heatmap_key][context_period_number[0]][
+                    0
+                ][0]["image"] = my_hash
+            elif len(context_period_number) == 2:
+                if (
+                    not context_period_number[1]
+                    in self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ]
+                ):
+                    self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ][context_period_number[1]] = dict()
+                if (
+                    not context_period_number[1]
+                    in self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ][context_period_number[1]]
+                ):
+                    self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ][context_period_number[1]][0] = dict()
+
+                self.settings["GPX_GENERATED"][heatmap_key][context_period_number[0]][
+                    context_period_number[1]
+                ][0]["image"] = my_hash
+            elif len(context_period_number) == 3:
+                if (
+                    not context_period_number[1]
+                    in self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ]
+                ):
+                    self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ][context_period_number[1]] = dict()
+                if (
+                    not context_period_number[2]
+                    in self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0][context_period_number[1]]
+                    ]
+                ):
+                    self.settings["GPX_GENERATED"][heatmap_key][
+                        context_period_number[0]
+                    ][context_period_number[1]][context_period_number[2]] = dict()
+
+                self.settings["GPX_GENERATED"][heatmap_key][context_period_number[0]][
+                    context_period_number[1]
+                ][context_period_number[2]]["image"] = my_hash
 
     def _generate_one_period(
         self,
