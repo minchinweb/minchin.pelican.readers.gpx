@@ -35,8 +35,10 @@ GPX_GENERATED
   week number). The value is the hash corresponding to the generated image.
   "Extra" slots (i.e. "day" for a month, and "months" and "days" for a year)
   are set to ``0``. For the map for 2025 is at
-  ``GPX_GENERATED["default"][2025][0][0]``. Keys may be missing if no
-  map was generated for that period.
+  ``GPX_GENERATED["default"][2025][0][0]["image"]``. Keys may be missing if no
+  map was generated for that period. Other available final levels keys are
+  ``track_count``, ``segment_count``, ``point_count`` (all after data
+  normalization), and ``travel_length_km``.
 
 
 "Article" Metadata

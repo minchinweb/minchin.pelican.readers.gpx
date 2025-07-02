@@ -227,13 +227,15 @@ class GPXGenerator(CachingGenerator):
             writer (pelican.writers.Writer): class that does the actual write
                 to disk
         """
-        combined_gpx = combine_gpx(
-            [
-                getattr(x, f"gpx_{heatmap_key}_trimmed")
-                for x in gpxes
-                if getattr(x, "valid")
-            ],
-            f"{gpx_log_name} ({heatmap_key})",
+        combined_gpx, track_count, segment_count, point_count, travel_length_km = (
+            combine_gpx(
+                [
+                    getattr(x, f"gpx_{heatmap_key}_trimmed")
+                    for x in gpxes
+                    if getattr(x, "valid")
+                ],
+                f"{gpx_log_name} ({heatmap_key})",
+            )
         )
         try:
             my_hash = gpx_hash(combined_gpx.to_xml())
@@ -281,86 +283,31 @@ class GPXGenerator(CachingGenerator):
 
             # push image key to Pelican shared context, so that themes can us
             # it on their period (daily, monthly, etc) pages
+            k0 = heatmap_key
+            k1 = context_period_number[0]
+            k2 = context_period_number[1] if len(context_period_number) >= 2 else 0
+            k3 = context_period_number[2] if len(context_period_number) >= 3 else 0
 
-            if not heatmap_key in self.settings["GPX_GENERATED"]:
-                self.settings["GPX_GENERATED"][heatmap_key] = dict()
-            if (
-                not context_period_number[0]
-                in self.settings["GPX_GENERATED"][heatmap_key]
-            ):
-                self.settings["GPX_GENERATED"][heatmap_key][
-                    context_period_number[0]
-                ] = dict()
+            # build out the layered dictionairy as needed
+            if k0 not in self.settings["GPX_GENERATED"]:
+                self.settings["GPX_GENERATED"][k0] = dict()
+            if k1 not in self.settings["GPX_GENERATED"][k0]:
+                self.settings["GPX_GENERATED"][k0][k1] = dict()
+            if k2 not in self.settings["GPX_GENERATED"][k0][k1]:
+                self.settings["GPX_GENERATED"][k0][k1][k2] = dict()
+            if k3 not in self.settings["GPX_GENERATED"][k0][k1][k2]:
+                self.settings["GPX_GENERATED"][k0][k1][k2][k3] = dict()
 
-            if len(context_period_number) == 1:
-                if (
-                    not 0
-                    in self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ]
-                ):
-                    self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ][0] = dict()
-                if (
-                    not 0
-                    in self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0][0]
-                    ]
-                ):
-                    self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ][0][0] = dict()
-
-                self.settings["GPX_GENERATED"][heatmap_key][context_period_number[0]][
-                    0
-                ][0]["image"] = my_hash
-            elif len(context_period_number) == 2:
-                if (
-                    not context_period_number[1]
-                    in self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ]
-                ):
-                    self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ][context_period_number[1]] = dict()
-                if (
-                    not context_period_number[1]
-                    in self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ][context_period_number[1]]
-                ):
-                    self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ][context_period_number[1]][0] = dict()
-
-                self.settings["GPX_GENERATED"][heatmap_key][context_period_number[0]][
-                    context_period_number[1]
-                ][0]["image"] = my_hash
-            elif len(context_period_number) == 3:
-                if (
-                    not context_period_number[1]
-                    in self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ]
-                ):
-                    self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ][context_period_number[1]] = dict()
-                if (
-                    not context_period_number[2]
-                    in self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0][context_period_number[1]]
-                    ]
-                ):
-                    self.settings["GPX_GENERATED"][heatmap_key][
-                        context_period_number[0]
-                    ][context_period_number[1]][context_period_number[2]] = dict()
-
-                self.settings["GPX_GENERATED"][heatmap_key][context_period_number[0]][
-                    context_period_number[1]
-                ][context_period_number[2]]["image"] = my_hash
+            self.settings["GPX_GENERATED"][k0][k1][k2][k3]["image"] = my_hash
+            # self.settings["GPX_GENERATED"][k0][k1][k2][k3]["image"] = combined_gpx
+            self.settings["GPX_GENERATED"][k0][k1][k2][k3]["track_count"] = track_count
+            self.settings["GPX_GENERATED"][k0][k1][k2][k3][
+                "segment_count"
+            ] = segment_count
+            self.settings["GPX_GENERATED"][k0][k1][k2][k3]["point_count"] = point_count
+            self.settings["GPX_GENERATED"][k0][k1][k2][k3][
+                "travel_length_km"
+            ] = travel_length_km
 
     def _generate_one_period(
         self,

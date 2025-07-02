@@ -72,7 +72,8 @@ GPX_SAVE_AS = "{slug}/index.html"
 GPX_URL = "{slug}"
 
 # store generated images for use my the theme
-GPX_GENERATED = {"default": {0: {0: {0: {"image": None}}}}}
+GPX_GENERATED = dict()
+# GPX_GENERATED[0][0][0]["image"] = my_hash
 
 
 def test_enabled(log=True):

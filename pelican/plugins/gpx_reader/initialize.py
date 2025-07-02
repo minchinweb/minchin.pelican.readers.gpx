@@ -113,10 +113,10 @@ def check_settings(pelican):
             ):
                 key_3 = f"GPX_{heatmap_setting.upper()}"
                 if key_3 in pelican.settings:
-                    pelican.settings["GPX_HEATMAPS"][heatmap_name][
-                        heatmap_setting
-                    ] = eval(f"pelican.settings['{key_3}']")
+                    pelican.settings["GPX_HEATMAPS"][heatmap_name][heatmap_setting] = (
+                        eval(f"pelican.settings['{key_3}']")
+                    )
                 else:
-                    pelican.settings["GPX_HEATMAPS"][heatmap_name][
-                        heatmap_setting
-                    ] = eval(key_3)
+                    pelican.settings["GPX_HEATMAPS"][heatmap_name][heatmap_setting] = (
+                        eval(key_3)
+                    )

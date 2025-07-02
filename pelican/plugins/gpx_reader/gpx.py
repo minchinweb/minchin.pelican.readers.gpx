@@ -79,6 +79,9 @@ def combine_gpx(gpxes, log_name=None):
         gpxes: assumed to be an interable of the XML of a GPX file
         log_name: name to display in the debug log
 
+    Return:
+    ---
+        combined_gpx, track_count, segment_count, point_count, travel_length_km
     """
     combined_gpx = None
     for raw_gpx in gpxes:
@@ -98,7 +101,7 @@ def combine_gpx(gpxes, log_name=None):
                 LOG_PREFIX,
                 log_name,
             )
-            return None
+            return None, 0, 0, 0, 0
 
         segment_count = 0
         point_count = 0
@@ -123,7 +126,7 @@ def combine_gpx(gpxes, log_name=None):
             f"{travel_length_km:,.1f} km long."
         )
 
-    return combined_gpx
+    return combined_gpx, track_count, segment_count, point_count, travel_length_km
 
 
 def clip_gpx(lat_1, long_1, lat_2, long_2, gpx, heatmap_name):
